@@ -1,41 +1,61 @@
-# 🦙 Ollama Spark - Asistente de Desarrollo IA Local
+# Ollama Spark - Local AI Development Assistant
 
-Un clon de GitHub Spark que utiliza Ollama para ejecutar modelos de IA localmente, proporcionando una experiencia de desarrollo sin depender de servicios en la nube.
+Una interfaz local elegante para interactuar con modelos de Ollama, diseñada específicamente para desarrolladores.
 
-## 📋 Requisitos Previos
+## 🚀 Características
 
-Antes de comenzar, asegúrate de tener instalado:
+- **Interfaz moderna**: Diseño limpio inspirado en GitHub Spark
+- **Soporte completo de Ollama**: Conexión directa con tu instalación local
+- **Contexto de proyecto**: Sube archivos para proporcionar contexto al AI
+- **Streaming en tiempo real**: Respuestas fluidas mientras el AI piensa
+- **Gestión robusta de errores**: Manejo gracioso de desconexiones y errores
+- **Persistencia de datos**: Conversaciones y archivos se guardan automáticamente
 
-- **Node.js** (versión 18 o superior)
-- **npm** o **yarn** como gestor de paquetes
-- **Ollama** instalado y ejecutándose localmente
+## 📋 Prerrequisitos
 
-## 🛠️ Instalación de Ollama
+### 1. Node.js y npm
+```bash
+# Verificar instalación
+node --version  # Debe ser v18 o superior
+npm --version   # Debe ser v8 o superior
+```
 
-### Para macOS:
+Si no tienes Node.js instalado:
+- **Windows/Mac**: Descarga desde [nodejs.org](https://nodejs.org/)
+- **Linux (Ubuntu/Debian)**:
+  ```bash
+  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  ```
+
+### 2. Ollama
+Ollama debe estar instalado y ejecutándose en tu sistema.
+
+#### Instalación de Ollama:
+
+**macOS:**
 ```bash
 curl -fsSL https://ollama.ai/install.sh | sh
 ```
 
-### Para Linux:
+**Linux:**
 ```bash
 curl -fsSL https://ollama.ai/install.sh | sh
 ```
 
-### Para Windows:
-1. Descarga el instalador desde [ollama.ai](https://ollama.ai)
-2. Ejecuta el archivo descargado y sigue las instrucciones
+**Windows:**
+Descarga el instalador desde [ollama.ai](https://ollama.ai/download)
 
-### Verificar instalación de Ollama:
+#### Verificar instalación de Ollama:
 ```bash
 ollama --version
 ```
 
-## 🚀 Instalación del Proyecto
+## 🛠️ Instalación y Configuración
 
 ### 1. Clonar el repositorio
 ```bash
-git clone [URL_DEL_REPOSITORIO]
+git clone <URL_DEL_REPOSITORIO>
 cd ollama-spark
 ```
 
@@ -44,140 +64,206 @@ cd ollama-spark
 npm install
 ```
 
-### 3. Iniciar Ollama (si no está ejecutándose)
+### 3. Verificar que Ollama esté ejecutándose
 ```bash
+# Iniciar Ollama (si no está ejecutándose)
 ollama serve
+
+# En otra terminal, verificar la conexión
+curl http://localhost:11434/api/tags
 ```
 
-### 4. Descargar modelos de IA
-Descarga al menos un modelo para usar con la aplicación:
+Si ves una respuesta JSON, Ollama está funcionando correctamente.
+
+### 4. Descargar modelos de AI
+
+**Modelos recomendados para desarrollo:**
 
 ```bash
-# Modelos recomendados (elige uno o varios):
+# Modelo pequeño y rápido (ideal para desarrollo)
+ollama pull llama2:7b
 
-# Modelo ligero y rápido
-ollama pull llama3.2:3b
-
-# Modelo equilibrado
-ollama pull llama3.2:7b
-
-# Modelo más potente (requiere más RAM)
-ollama pull llama3.2:13b
+# Modelo más capaz (requiere más recursos)
+ollama pull codellama:13b
 
 # Modelo especializado en código
-ollama pull codellama:7b
+ollama pull codellama:python
 
-# Modelo general versátil
-ollama pull mistral:7b
+# Modelo muy ligero para pruebas
+ollama pull tinyllama
 ```
 
-### 5. Verificar que los modelos estén disponibles
+**Para verificar modelos instalados:**
 ```bash
 ollama list
 ```
 
-## 🎯 Ejecutar la Aplicación
+## 🏃‍♂️ Ejecutar la Aplicación
 
-### Modo de desarrollo:
+### Modo Desarrollo
 ```bash
 npm run dev
 ```
 
 La aplicación estará disponible en: `http://localhost:5173`
 
-### Construir para producción:
+### Modo Producción
 ```bash
+# Construir la aplicación
 npm run build
-```
 
-### Vista previa de la construcción:
-```bash
+# Servir la aplicación construida
 npm run preview
 ```
 
-## 📖 Cómo Usar
+## 🔧 Resolución de Problemas
 
-1. **Conexión automática**: La aplicación se conectará automáticamente a Ollama (localhost:11434)
+### Error: "Cannot connect to Ollama"
 
-2. **Seleccionar modelo**: En la parte superior, selecciona uno de los modelos que descargaste
-
-3. **Subir archivos de proyecto** (opcional):
-   - Usa la barra lateral izquierda para subir archivos de tu proyecto
-   - Esto proporciona contexto al modelo sobre tu código
-
-4. **Iniciar conversación**:
-   - Escribe tu pregunta o solicitud en el campo de texto inferior
-   - El modelo responderá basándose en tu consulta y el contexto de los archivos
-
-## 🔧 Características
-
-- **Chat en tiempo real** con modelos de Ollama
-- **Carga de archivos de proyecto** para proporcionar contexto
-- **Interfaz similar a GitHub Spark** pero completamente local
-- **Múltiples modelos** disponibles según tus necesidades
-- **Historial de conversaciones** persistente
-- **Sintaxis highlighting** para código
-- **Tema oscuro** optimizado para desarrolladores
-
-## 🛠️ Comandos Disponibles
-
+**1. Verificar que Ollama esté ejecutándose:**
 ```bash
-# Desarrollo
-npm run dev          # Inicia el servidor de desarrollo
-npm run build        # Construye la aplicación para producción
-npm run preview      # Vista previa de la construcción
-npm run lint         # Ejecuta el linter
-npm run optimize     # Optimiza dependencias
+# Comprobar proceso
+ps aux | grep ollama
 
-# Ollama
-ollama serve         # Inicia el servidor de Ollama
-ollama list          # Lista modelos instalados
-ollama pull [modelo] # Descarga un nuevo modelo
-ollama rm [modelo]   # Elimina un modelo
+# Si no está ejecutándose, iniciarlo
+ollama serve
 ```
 
-## 🔍 Solución de Problemas
+**2. Verificar puerto:**
+```bash
+# Ollama debe ejecutarse en puerto 11434
+netstat -tlnp | grep 11434
+```
 
-### Error: "No se puede conectar a Ollama"
-- Verifica que Ollama esté ejecutándose: `ollama serve`
-- Confirma que esté en el puerto correcto (11434): `curl http://localhost:11434/api/tags`
+**3. Verificar conexión:**
+```bash
+curl http://localhost:11434/api/tags
+```
 
-### Error: "No hay modelos disponibles"
-- Descarga al menos un modelo: `ollama pull llama3.2:3b`
-- Verifica que se instaló: `ollama list`
+### Error: "No models available"
+
+**Descargar al menos un modelo:**
+```bash
+ollama pull llama2:7b
+```
+
+**Verificar modelos descargados:**
+```bash
+ollama list
+```
+
+### Puerto ocupado (Error EADDRINUSE)
+
+**Cambiar puerto de desarrollo:**
+```bash
+# Editar package.json o usar variable de entorno
+PORT=3001 npm run dev
+```
 
 ### Problemas de rendimiento
-- Usa modelos más pequeños (3b en lugar de 13b)
-- Asegúrate de tener suficiente RAM libre
-- Cierra otras aplicaciones que consuman mucha memoria
 
-### Puerto ocupado
-- Mata procesos en el puerto 5000: `npm run kill`
-- O usa un puerto diferente: `npm run dev -- --port 3000`
+**Para modelos grandes:**
+- Asegúrate de tener suficiente RAM (8GB+ recomendado)
+- Cierra otras aplicaciones pesadas
+- Considera usar modelos más pequeños (`tinyllama`, `llama2:7b`)
 
-## 📊 Requisitos del Sistema
+**Optimizar Ollama:**
+```bash
+# Configurar límite de memoria (ejemplo: 4GB)
+export OLLAMA_MAX_LOADED_MODELS=1
+export OLLAMA_MAX_QUEUE=1
+```
 
-### Mínimos:
-- **RAM**: 8GB (para modelos 3b)
-- **Espacio**: 10GB libres
-- **CPU**: Procesador moderno de 64 bits
+## 🎯 Uso de la Aplicación
 
-### Recomendados:
-- **RAM**: 16GB+ (para modelos 7b-13b)
-- **Espacio**: 50GB+ (para múltiples modelos)
-- **CPU**: 8+ núcleos
-- **GPU**: Compatible con CUDA (opcional, mejora rendimiento)
+### 1. Primera vez
+1. Abre `http://localhost:5173`
+2. Espera a que se conecte con Ollama
+3. Selecciona un modelo del dropdown
+4. ¡Comienza a chatear!
 
-## 🤝 Contribuciones
+### 2. Subir archivos de proyecto
+1. Arrastra archivos a la barra lateral izquierda
+2. O usa el botón "Choose Files"
+3. Los archivos proporcionan contexto al AI
 
-Las contribuciones son bienvenidas. Por favor:
+### 3. Tipos de archivos soportados
+- JavaScript/TypeScript (`.js`, `.jsx`, `.ts`, `.tsx`)
+- Estilos (`.css`, `.scss`, `.less`)
+- Markup (`.html`, `.xml`)
+- Datos (`.json`, `.yaml`, `.yml`)
+- Documentación (`.md`, `.txt`)
+- Código (`.py`, `.java`, `.cpp`, `.c`, `.h`)
 
-1. Haz fork del repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/nueva-caracteristica`)
-3. Commit tus cambios (`git commit -am 'Añade nueva característica'`)
-4. Push a la rama (`git push origin feature/nueva-caracteristica`)
-5. Abre un Pull Request
+### 4. Comandos útiles
+- **Enter**: Enviar mensaje
+- **Shift + Enter**: Nueva línea
+- **Ctrl/Cmd + R**: Refrescar conexión
 
-## 📄 Licencia
+## 🔒 Seguridad y Privacidad
 
-Este proyecto está licenciado bajo los términos de la licencia MIT. Los recursos del Spark Template de GitHub están bajo Copyright GitHub, Inc.
+- **100% Local**: Toda la comunicación es local, nada se envía a internet
+- **Sin telemetría**: No se recopilan datos de uso
+- **Datos persistentes**: Conversaciones se guardan localmente en tu navegador
+- **Archivos seguros**: Los archivos subidos solo existen en tu sesión local
+
+## 🛠️ Desarrollo y Personalización
+
+### Estructura del proyecto
+```
+src/
+├── components/          # Componentes React
+├── lib/                # Utilidades y API
+├── assets/             # Recursos estáticos
+└── styles/             # Estilos globales
+```
+
+### Scripts disponibles
+```bash
+npm run dev             # Servidor de desarrollo
+npm run build           # Construir para producción
+npm run preview         # Vista previa de build
+npm run lint            # Linter de código
+npm run type-check      # Verificación de tipos
+```
+
+### Personalizar tema
+Edita `src/index.css` para cambiar colores y estilos.
+
+## 📚 Comandos de Ollama Útiles
+
+```bash
+# Gestión de modelos
+ollama list                          # Listar modelos instalados
+ollama pull <modelo>                 # Descargar modelo
+ollama rm <modelo>                   # Eliminar modelo
+ollama show <modelo>                 # Información del modelo
+
+# Administración
+ollama serve                         # Iniciar servidor
+ollama ps                           # Procesos activos
+ollama stop <modelo>                # Detener modelo específico
+
+# Ejemplos de uso directo
+ollama run llama2:7b "Hello world"  # Ejecutar prompt directo
+```
+
+## 🤝 Soporte
+
+Si encuentras problemas:
+
+1. **Verifica prerrequisitos**: Node.js, Ollama instalados y funcionando
+2. **Consulta logs**: Abre DevTools del navegador (F12) y revisa la consola
+3. **Reinicia servicios**: Detén y reinicia tanto Ollama como la aplicación
+4. **Verifica recursos**: Asegúrate de tener suficiente RAM disponible
+
+## 📝 Notas Adicionales
+
+- La primera ejecución puede ser lenta mientras los modelos se cargan
+- Los modelos más grandes ofrecen mejores respuestas pero requieren más recursos
+- Guarda tus conversaciones importantes, ya que se almacenan localmente
+- Puedes ejecutar múltiples instancias de Ollama con diferentes configuraciones
+
+---
+
+**¡Disfruta desarrollando con tu asistente AI local!** 🚀

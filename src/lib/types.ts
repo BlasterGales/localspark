@@ -38,6 +38,7 @@ export interface OllamaResponse {
   };
   response?: string;
   done: boolean;
+  error?: string;
 }
 
 export interface AppState {

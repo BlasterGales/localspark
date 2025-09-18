@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 import { 
   UploadSimple, 
   File, 
@@ -55,26 +56,71 @@ export function ProjectFilesSidebar({ files, onFilesChange }: ProjectFilesSideba
   };
 
   const handleFileUpload = (fileList: FileList) => {
+    if (!fileList.length) return;
+    
+    const maxFileSize = 10 * 1024 * 1024; // 10MB limit
+    const maxFiles = 20; // Maximum 20 files
+    
+    if (files.length + fileList.length > maxFiles) {
+      toast.error(`Cannot upload more than ${maxFiles} files total`);
+      return;
+    }
+    
     const newFiles: ProjectFile[] = [];
+    let processedCount = 0;
     
     Array.from(fileList).forEach((file) => {
+      if (file.size > maxFileSize) {
+        toast.error(`File ${file.name} is too large (max 10MB)`);
+        processedCount++;
+        return;
+      }
+      
+      if (!file.type.startsWith('text/') && 
+          !file.name.match(/\.(js|jsx|ts|tsx|css|html|json|md|txt|py|java|cpp|c|h|scss|less|yaml|yml|xml)$/i)) {
+        toast.error(`File ${file.name} is not a supported text file`);
+        processedCount++;
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onload = (e) => {
-        const content = e.target?.result as string;
-        const projectFile: ProjectFile = {
-          id: `${Date.now()}-${Math.random()}`,
-          name: file.name,
-          content,
-          type: file.type || 'text/plain',
-          size: file.size,
-          lastModified: new Date(file.lastModified),
-        };
-        newFiles.push(projectFile);
-        
-        if (newFiles.length === fileList.length) {
-          onFilesChange([...files, ...newFiles]);
+        try {
+          const content = e.target?.result as string;
+          if (!content) {
+            toast.error(`Failed to read file ${file.name}`);
+            return;
+          }
+          
+          const projectFile: ProjectFile = {
+            id: `${Date.now()}-${Math.random()}`,
+            name: file.name,
+            content,
+            type: file.type || 'text/plain',
+            size: file.size,
+            lastModified: new Date(file.lastModified),
+          };
+          newFiles.push(projectFile);
+          processedCount++;
+          
+          if (processedCount === fileList.length) {
+            if (newFiles.length > 0) {
+              onFilesChange([...files, ...newFiles]);
+              toast.success(`Uploaded ${newFiles.length} file${newFiles.length === 1 ? '' : 's'}`);
+            }
+          }
+        } catch (error) {
+          console.error('Error processing file:', error);
+          toast.error(`Failed to process file ${file.name}`);
+          processedCount++;
         }
       };
+      
+      reader.onerror = () => {
+        toast.error(`Failed to read file ${file.name}`);
+        processedCount++;
+      };
+      
       reader.readAsText(file);
     });
   };

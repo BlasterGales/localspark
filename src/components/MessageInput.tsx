@@ -2,6 +2,7 @@ import { useState, KeyboardEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { PaperPlaneTilt } from '@phosphor-icons/react';
+import { toast } from 'sonner';
 
 interface MessageInputProps {
   onSendMessage: (message: string) => void;
@@ -12,8 +13,13 @@ export function MessageInput({ onSendMessage, disabled = false }: MessageInputPr
   const [message, setMessage] = useState('');
 
   const handleSend = () => {
-    if (message.trim() && !disabled) {
-      onSendMessage(message.trim());
+    const trimmedMessage = message.trim();
+    if (trimmedMessage && !disabled) {
+      if (trimmedMessage.length > 10000) {
+        toast.error('Message is too long (max 10,000 characters)');
+        return;
+      }
+      onSendMessage(trimmedMessage);
       setMessage('');
     }
   };

@@ -44,7 +44,15 @@ export function ModelSelector({
 
   useEffect(() => {
     loadModels();
-  }, []);
+    
+    // Start connection monitoring
+    ollamaAPI.startConnectionMonitoring(onConnectionChange);
+    
+    // Cleanup
+    return () => {
+      ollamaAPI.stopConnectionMonitoring();
+    };
+  }, [onConnectionChange]);
 
   const formatModelSize = (size: number) => {
     const gb = size / (1024 * 1024 * 1024);
