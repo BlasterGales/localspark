@@ -74,7 +74,7 @@ export function ChatInterface({ messages, isLoading }: ChatInterfaceProps) {
               )}
               
               <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-                <span>{message.timestamp.toLocaleTimeString()}</span>
+                <span>{new Date(message.timestamp).toLocaleTimeString()}</span>
                 {message.model && (
                   <Badge variant="secondary" className="text-xs">
                     {message.model}

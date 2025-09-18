@@ -159,7 +159,7 @@ export function ProjectFilesSidebar({ files, onFilesChange }: ProjectFilesSideba
                       {formatFileSize(file.size)}
                     </Badge>
                     <span className="text-xs text-muted-foreground">
-                      {file.lastModified.toLocaleDateString()}
+                      {new Date(file.lastModified).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
