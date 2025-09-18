@@ -12,7 +12,8 @@ import {
   FileText,
   FileCss,
   FileHtml,
-  FileJs
+  FileJs,
+  FolderOpen // Nuevo: para Load from Project
 } from '@phosphor-icons/react';
 import { ProjectFile } from '@/lib/types';
 
@@ -23,6 +24,7 @@ interface ProjectFilesSidebarProps {
 
 export function ProjectFilesSidebar({ files, onFilesChange }: ProjectFilesSidebarProps) {
   const [dragOver, setDragOver] = useState(false);
+  const [loadingProject, setLoadingProject] = useState(false);
 
   const getFileIcon = (fileName: string) => {
     const ext = fileName.split('.').pop()?.toLowerCase();
@@ -53,6 +55,42 @@ export function ProjectFilesSidebar({ files, onFilesChange }: ProjectFilesSideba
     if (size < 1024) return `${size}B`;
     if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)}KB`;
     return `${(size / (1024 * 1024)).toFixed(1)}MB`;
+  };
+
+  // Nuevo: Carga files desde proyecto FS via backend
+  const loadProjectFiles = async (dir: string = '.') => {
+    setLoadingProject(true);
+    try {
+      const res = await fetch(`/api/files/list/${dir}`);
+      if (!res.ok) throw new Error('Failed to list files');
+      const items = await res.json();
+
+      const fileList: ProjectFile[] = [];
+      for (const item of items) {
+        if (!item.isDir) { // Solo files, no dirs recursivos por simplicidad
+          const fileRes = await fetch(`/api/files/read/${item.name}`);
+          if (fileRes.ok) {
+            const { content } = await fileRes.json();
+            fileList.push({
+              id: `${Date.now()}-${item.name}`,
+              name: item.name,
+              content,
+              type: 'text/plain', // Inferir si necesitas
+              size: content.length,
+              lastModified: new Date(),
+              path: item.name // Usa path para apply_fix preciso
+            });
+          }
+        }
+      }
+
+      onFilesChange(fileList);
+      toast.success(`Loaded ${fileList.length} files from project`);
+    } catch (err) {
+      toast.error(`Error loading project: ${(err as Error).message}`);
+    } finally {
+      setLoadingProject(false);
+    }
   };
 
   const handleFileUpload = (fileList: FileList) => {
@@ -99,6 +137,7 @@ export function ProjectFilesSidebar({ files, onFilesChange }: ProjectFilesSideba
             type: file.type || 'text/plain',
             size: file.size,
             lastModified: new Date(file.lastModified),
+            path: file.name // Agrega path para uploads locales
           };
           newFiles.push(projectFile);
           processedCount++;
@@ -152,8 +191,19 @@ export function ProjectFilesSidebar({ files, onFilesChange }: ProjectFilesSideba
       <div className="p-4 border-b">
         <h3 className="font-semibold text-sm">Project Files</h3>
         <p className="text-xs text-muted-foreground mt-1">
-          Upload files to provide context to the AI
+          Upload or load from project for AI context
         </p>
+        {/* Nuevo: Botón Load from Project */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => loadProjectFiles()}
+          disabled={loadingProject}
+          className="mt-2 w-full text-xs"
+        >
+          <FolderOpen size={14} className="mr-1" />
+          {loadingProject ? 'Loading...' : 'Load from Project'}
+        </Button>
       </div>
 
       <div
@@ -208,6 +258,7 @@ export function ProjectFilesSidebar({ files, onFilesChange }: ProjectFilesSideba
                       {new Date(file.lastModified).toLocaleDateString()}
                     </span>
                   </div>
+                  {file.path && <p className="text-xs text-muted-foreground mt-1">Path: {file.path}</p>}
                 </div>
                 <Button
                   variant="ghost"

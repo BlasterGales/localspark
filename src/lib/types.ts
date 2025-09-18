@@ -14,10 +14,14 @@ export interface OllamaModel {
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system'; // Agrego 'system' para mensajes de comandos
   content: string;
   timestamp: Date;
   model?: string;
+  metadata?: { // Nuevo: para acciones inteligentes
+    hasCodeBlock?: boolean;
+    suggestedAction?: string;
+  };
 }
 
 export interface ProjectFile {
@@ -27,6 +31,7 @@ export interface ProjectFile {
   type: string;
   size: number;
   lastModified: Date;
+  path?: string; // Nuevo: para paths completos en FS ops
 }
 
 export interface OllamaResponse {

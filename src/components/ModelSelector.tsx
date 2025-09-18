@@ -42,8 +42,20 @@ export function ModelSelector({
     }
   };
 
+  // Nuevo: Verifica conexión al backend (opcional, para full stack)
+  const checkBackend = async () => {
+    try {
+      const res = await fetch('/api/health', { method: 'GET' }); // Asume ruta simple en server.js
+      if (!res.ok) throw new Error('Backend down');
+    } catch (err) {
+      console.warn('Backend connection issue:', err);
+      // No cambia isConnected, ya que es Ollama-focused
+    }
+  };
+
   useEffect(() => {
     loadModels();
+    checkBackend();
     
     // Start connection monitoring
     ollamaAPI.startConnectionMonitoring(onConnectionChange);

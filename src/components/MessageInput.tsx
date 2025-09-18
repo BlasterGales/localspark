@@ -38,7 +38,7 @@ export function MessageInput({ onSendMessage, disabled = false }: MessageInputPr
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask for code help, explanations, or improvements..."
+          placeholder="Ask for code help, explanations, or improvements... (e.g., 'Fix bug in App.tsx')"
           className="flex-1 min-h-[80px] max-h-[200px] resize-none"
           disabled={disabled}
         />

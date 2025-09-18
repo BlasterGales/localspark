@@ -20,6 +20,7 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        success: "bg-green-500 text-white shadow-xs hover:bg-green-600 focus-visible:ring-green/20" // Nuevo: para Apply Fix, etc.
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -35,16 +36,23 @@ const buttonVariants = cva(
   }
 )
 
+/**
+ * Button component for LocalSpark UI. Supports variants, sizes, and asChild for composability.
+ * Usage: <Button variant="success" size="sm"><Check /> Apply</Button>
+ */
+interface ButtonProps
+  extends ComponentProps<"button">,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
 function Button({
   className,
   variant,
   size,
   asChild = false,
   ...props
-}: ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
+}: ButtonProps) {
   const Comp = asChild ? Slot : "button"
 
   return (
@@ -55,5 +63,7 @@ function Button({
     />
   )
 }
+
+Button.displayName = "Button"
 
 export { Button, buttonVariants }

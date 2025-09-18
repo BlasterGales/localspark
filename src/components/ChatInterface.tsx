@@ -2,18 +2,21 @@ import { useEffect, useRef } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';
 import { ChatMessage } from '@/lib/types';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Check } from 'lucide-react'; // Agregado para botón Apply
 import { cn } from '@/lib/utils';
 
 interface ChatInterfaceProps {
   messages: ChatMessage[];
   isLoading: boolean;
+  onApplyFix?: (msg: ChatMessage, filePath?: string) => void; // Nuevo: callback para aplicar fixes
 }
 
-export function ChatInterface({ messages, isLoading }: ChatInterfaceProps) {
+export function ChatInterface({ messages, isLoading, onApplyFix }: ChatInterfaceProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export function ChatInterface({ messages, isLoading }: ChatInterfaceProps) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Badge variant={message.role === 'user' ? 'secondary' : 'default'}>
-                    {message.role === 'user' ? 'You' : 'Assistant'}
+                    {message.role === 'user' ? 'You' : message.role === 'system' ? 'System' : 'Assistant'}
                   </Badge>
                   {message.model && (
                     <span className="text-xs text-muted-foreground">
@@ -78,6 +81,20 @@ export function ChatInterface({ messages, isLoading }: ChatInterfaceProps) {
                     {message.content}
                   </ReactMarkdown>
                 </div>
+
+                {/* Nuevo: Botón Apply Fix si hay metadata */}
+                {message.metadata?.suggestedAction === 'apply_fix' && onApplyFix && (
+                  <div className="mt-2 flex justify-end">
+                    <Button 
+                      onClick={() => onApplyFix(message)} 
+                      size="sm" 
+                      variant="outline"
+                      className="flex items-center gap-1"
+                    >
+                      <Check size={16} /> Apply Fix
+                    </Button>
+                  </div>
+                )}
               </div>
             </Card>
           </div>

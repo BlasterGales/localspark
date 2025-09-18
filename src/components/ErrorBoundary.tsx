@@ -1,5 +1,5 @@
 import React from 'react';
-import { Warning, ArrowClockwise } from '@phosphor-icons/react';
+import { AlertTriangle, RefreshCw } from 'lucide-react'; // Cambiado a lucide para consistencia con Shadcn
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -33,7 +33,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    console.error('LocalSpark ErrorBoundary caught an error:', error, errorInfo);
     this.setState({
       error,
       errorInfo,
@@ -63,10 +63,10 @@ export function DefaultErrorFallback({ error, resetErrorBoundary }: ErrorFallbac
   return (
     <div className="h-screen flex items-center justify-center p-4 bg-background">
       <Card className="max-w-md w-full p-6 text-center">
-        <Warning size={48} className="mx-auto mb-4 text-destructive" />
+        <AlertTriangle size={48} className="mx-auto mb-4 text-destructive" />
         <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
         <p className="text-muted-foreground mb-4">
-          The application encountered an unexpected error. Don't worry, your data is safe.
+          The LocalSpark application encountered an unexpected error. Your project data is safe.
         </p>
         {error && (
           <details className="mb-4 text-left">
@@ -75,11 +75,12 @@ export function DefaultErrorFallback({ error, resetErrorBoundary }: ErrorFallbac
             </summary>
             <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto max-h-32">
               {error.message}
+              {error.stack && `\n\nStack:\n${error.stack}`}
             </pre>
           </details>
         )}
         <Button onClick={resetErrorBoundary} className="w-full">
-          <ArrowClockwise size={16} className="mr-2" />
+          <RefreshCw size={16} className="mr-2" />
           Try again
         </Button>
       </Card>
@@ -87,10 +88,11 @@ export function DefaultErrorFallback({ error, resetErrorBoundary }: ErrorFallbac
   );
 }
 
-// Hook for graceful error handling in functional components
+// Hook for graceful error handling in functional components (mejorado con toast si sonner está disponible)
 export function useErrorHandler() {
   return (error: Error, errorInfo?: string) => {
-    console.error('Application error:', error, errorInfo);
-    // In a real app, you might want to send this to an error reporting service
+    console.error('LocalSpark Application error:', error, errorInfo);
+    // Opcional: integra con toast si lo usas en App.tsx
+    // toast.error('An error occurred: ' + error.message);
   };
 }
