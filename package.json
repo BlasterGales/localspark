@@ -33,7 +33,7 @@
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
     "vite": "^6.3.5",
-    "@types/node": "^22.7.6",
+    "@types/node": "^24.5.2",
     "react-error-boundary": "^4.0.13"
   }
 }
